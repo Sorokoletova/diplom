@@ -47,12 +47,12 @@ jobs:
              cd diplom
              docker compose up -d
 
-       - name: Clear after deploy
-           if: always()
-           uses: appleboy/ssh-action@master
-           with:
-             host: ${{ secrets.HOST }}
-             username: ${{ secrets.USERNAME }}
-             password: ${{ secrets.PASSWORD }}
-             script: |
+     - name: clear after deploy
+       if: always()
+       uses: appleboy/ssh-action@master
+       with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
+            script: |
                docker system prune -a -f
