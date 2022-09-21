@@ -34,9 +34,10 @@ jobs:
            password: ${{ secrets.PASSWORD }}
            port: ${{ secrets.PORT }}
            source: "deploy/*"
-           target: "diplom"
+           target: diplom
            strip_components: 1
-     - name: Run compose
+
+     - name: run compose
        uses: appleboy/ssh-action@master
        with:
            host: ${{ secrets.HOST }}
@@ -45,6 +46,7 @@ jobs:
            script: |
              cd diplom
              docker compose up -d
+
        - name: Clear after deploy
            if: always()
            uses: appleboy/ssh-action@master
