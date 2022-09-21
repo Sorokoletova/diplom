@@ -4,23 +4,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-#      - name: checkout
-#        uses: actions/checkout@v2
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v1
-#        with:
-#          username: ${{secrets.DOCKER_HUB_USERNAME}}
-#          password: ${{secrets.DOCKER_HUB_TOKEN}}
-#      - name: Build and push
-#        uses: docker/Build-push-action@v2
-#        with:
-#          context: .
-#          file: Dockerfile
-#          builder: ${{steps.buildx.outputs.name}}
-#          push: true
-#          tags: ${{secrets.DOCKER_HUB_USERNAME}}/
-#          username: ${{secrets.DOCKER_HUB_USERNAME}}
-#          password: ${{secrets.DOCKER_HUB_TOKEN}}
       - name: clone code
         uses: actions/checkout@v2
       - name: docker build
@@ -51,42 +34,23 @@ jobs:
            password: ${{ secrets.PASSWORD }}
            port: ${{ secrets.PORT }}
            source: "deploy/*"
-           target: "diplom-ci"
+           target: "diplom"
            strip_components: 1
-
-
-
-#  deploy:
-#    needs: build_and_push
-#    runs-on: ubuntu-latest
-#    env:
-#      DB_PASSWORD: ${{ secrets.PASSWORD_DB }}
-#      DB_USER: ${{ secrets.USER_DB }}
-#      DB_NAME: ${{ secrets.NAME_DB }}
-#    steps:
-#      - name: clone
-#        uses: actions/checkout@v2
-#      - name: render configs
-#        run: |
-#          mkdir deploy
-#          cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
-##          cat config-ci.py | envsubst > deploy/config.py
-#      - name: copy files
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.SSH_USERNAME }}
-#          password: ${{ secrets.SSH_PASSWORD }}
-#          source: "deploy/docker-compose.yaml"
-#          target: "flask-app-ci"
-#          strip_components: 1
-#      - name: run
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.HOST }}
-#          username: ${{ secrets.SSH_USERNAME }}
-#          password: ${{ secrets.SSH_PASSWORD }}
-#          script: |
-#            cd diplom
-#            echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
-#
+     - name: Run compose
+       uses: appleboy/ssh-action@master
+       with:
+           host: ${{ secrets.HOST }}
+           username: ${{ secrets.USERNAME }}
+           password: ${{ secrets.PASSWORD }}
+           script: |
+             cd diplom
+             docker compose up -d
+       - name: Clear after deploy
+           if: always()
+           uses: appleboy/ssh-action@master
+           with:
+             host: ${{ secrets.HOST }}
+             username: ${{ secrets.USERNAME }}
+             password: ${{ secrets.PASSWORD }}
+             script: |
+               docker system prune -a -f
