@@ -39,9 +39,8 @@ jobs:
        uses: actions/checkout@v2
      - name: render template
        run: |
-         echo "$VAULT_PASSWORD" > /tmp/.vault_pass.txt
+         echo "${{ secrets.VAULT_PASSWORD }}" > /tmp/.vault_pass.txt
          ansible-vault decrypt ./deploy/.env-ci 
-         ansible-vault decrypt ./deploy/docker-compose=ci.yaml
          ansible-vault decrypt ./deploy/nginx/default.conf
          mv deploy/.env-ci deploy/.env
      - name: copy files to server
