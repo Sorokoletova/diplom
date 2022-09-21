@@ -32,12 +32,18 @@ jobs:
 
   deploy:
      runs-on: ubuntu-latest
+     env:
+       ANSIBLE_VAULT_PASSWORD_FILE: /tmp/.vault_pass.txt
      steps:
      - name: checkout
        uses: actions/checkout@v2
      - name: render template
        run: |
-         echo "${{ secrets.VAULT_PASSWORD }}" | ansible-vault decrypt deploy/*
+         echo "$VAULT_PASSWORD" > /tmp/.vault_pass.txt
+         ansible-vault decrypt ./deploy/.env-ci 
+         ansible-vault decrypt ./deploy/docker-compose=ci.yaml
+         ansible-vault decrypt ./deploy/nginx/default.conf
+         mv deploy/.env-ci deploy/.env
      - name: copy files to server
        uses: appleboy/scp-action@master
        with:
