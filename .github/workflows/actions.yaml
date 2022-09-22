@@ -26,7 +26,7 @@ jobs:
          ansible-vault decrypt ./deploy/.env-ci 
          ansible-vault decrypt ./deploy/nginx/default.conf
          mv deploy/.env-ci deploy/.env
-         cat deploy/docker-compose-ci.yami | envsubst > deploy/docker-compose.yami
+         cat deploy/docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
 
      - name: copy files to server
        uses: appleboy/scp-action@master
