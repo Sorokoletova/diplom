@@ -32,7 +32,7 @@ jobs:
            host: ${{ secrets.HOST }}
            username: ${{ secrets.USERNAME }}
            password: ${{ secrets.PASSWORD }}
-           port: ${{ secrets.PORT }}
+#           port: ${{ secrets.PORT }}
            source: "deploy/*"
            target: diplom
            strip_components: 1
