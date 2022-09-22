@@ -18,7 +18,7 @@ services:
       - backend_nw
 
   api:
-    image: sorokoletova/diplom_skypro
+    image: tsorokoletova/diplom_skypro
     restart: always
     env_file:
       - .env
