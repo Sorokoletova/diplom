@@ -2,7 +2,7 @@ name: Build and deploy action
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: clone code
         uses: actions/checkout@v2
@@ -14,7 +14,7 @@ jobs:
         run: docker push tsorokoletova/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
 
   deploy:
-     runs-on: ubuntu-latest
+     runs-on: ubuntu-22.04
      needs: build
      env:
        ANSIBLE_VAULT_PASSWORD_FILE: /tmp/.vault_pass.txt
@@ -40,22 +40,22 @@ jobs:
            target: diplom
            strip_components: 1
 
-     - name: run compose
-       uses: appleboy/ssh-action@master
-       with:
-           host: ${{ secrets.HOST }}
-           username: ${{ secrets.USERNAME }}
-           password: ${{ secrets.PASSWORD }}
-           script: |
-             cd diplom
-             docker compose up -d
-
-     - name: clear after deploy
-       if: always()
-       uses: appleboy/ssh-action@master
-       with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWORD }}
-            script: |
-               docker system prune -a -f
+#     - name: run compose
+#       uses: appleboy/ssh-action@master
+#       with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USERNAME }}
+#           password: ${{ secrets.PASSWORD }}
+#           script: |
+#             cd diplom
+#             docker compose up -d
+#
+#     - name: clear after deploy
+#       if: always()
+#       uses: appleboy/ssh-action@master
+#       with:
+#            host: ${{ secrets.HOST }}
+#            username: ${{ secrets.USERNAME }}
+#            password: ${{ secrets.PASSWORD }}
+#            script: |
+#               docker system prune -a -f
