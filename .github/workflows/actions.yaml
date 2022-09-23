@@ -7,7 +7,7 @@ jobs:
       - name: clone code
         uses: actions/checkout@v2
       - name: docker build
-        run: docker build -t tsorokoletova/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
+        run: tsorokoletova/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
       - name: docker login
         run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       - name: docker push
@@ -27,7 +27,7 @@ jobs:
          ansible-vault decrypt ./deploy/.env-ci 
          ansible-vault decrypt ./deploy/nginx/default.conf
          mv deploy/.env-ci deploy/.env
-         cat deploy/docker-compose.yaml | envsubst > deploy/docker-compose.yaml
+         cat deploy/docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
 
      - name: copy files to server
        uses: appleboy/scp-action@master
