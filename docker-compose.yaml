@@ -11,7 +11,7 @@ services:
       - postgres_data_todolist:/var/lib/postgresql/data
     healthcheck:
 #      test: pg_isready -U postgres
-      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      test: pg_isready -U postgres -d postgres
       interval: 5s
       timeout:  3s
       retries: 3
