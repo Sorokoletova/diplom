@@ -12,7 +12,7 @@ RUN apt-get install -y --no-install-recommends \
     libpq-dev \
     && apt-get autoclean && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* /tmp/var/tmp
-COPY requirements.txt .
+COPY ../requirements.txt .
 # Устанавливаем через pip зависимости
 RUN python -m pip install --no-cache -r requirements.txt
 # Копируем код приложения

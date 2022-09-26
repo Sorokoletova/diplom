@@ -36,6 +36,8 @@ services:
     networks:
       - backend_nw
       - frontend_nw
+    volumes:
+      - ./nginx/static/:/opt/static/
   frontend:
     image: sermalenk/skypro-front:lesson-34
     restart: always
