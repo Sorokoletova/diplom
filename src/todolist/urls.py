@@ -21,4 +21,7 @@ from todolist.views import health_check
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('ping/', health_check, name='health_check'),
+    path('core/', include('core.urls')),
+    path('oauth/', include('social_django.urls', namespace='social')),
+
 ]
