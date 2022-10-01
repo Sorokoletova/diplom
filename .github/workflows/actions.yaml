@@ -30,7 +30,7 @@ jobs:
          mv deploy/.env-ci deploy/.env
      - name: Collect static
        run: | 
-         cp deploy/.env deploy/.env
+         cp deploy/.env .env
          docker run \
          --user 0 \
          --rm \
