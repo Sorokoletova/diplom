@@ -12,8 +12,8 @@ services:
     healthcheck:
 #      test: pg_isready -U postgres
       test: pg_isready -U postgres -d postgres
-      interval: 5s
-      timeout:  3s
+      interval: 10s
+      timeout:  10s
       retries: 3
     ports:
       - "5432:5432"
@@ -54,8 +54,8 @@ services:
       - "8000:8000"
     healthcheck:
       test: curl -sS http://127.0.0.1:8000/ping/ || exit 1
-      interval: 3s
-      timeout: 3s
+      interval: 10s
+      timeout: 10s
       retries: 3
     networks:
       - backend_nw

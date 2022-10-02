@@ -6,9 +6,13 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
 import environ
 import logging
-from filters import HealthCheckFilter
+from typing import Any
+from todolist.filters import HealthCheckFilter
 from pathlib import Path
 
 env = environ.Env(
@@ -52,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
