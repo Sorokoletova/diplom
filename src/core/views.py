@@ -23,6 +23,8 @@ class LoginView(generics.CreateAPIView):
         return Response(serializer.data)
 
 
+
+
 class ProfileView(generics.RetrieveUpdateDestroyAPIView):
     """Изменение данных пользователя"""
     queryset = User.objects.all()
