@@ -48,6 +48,7 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         instance.is_deleted = True
         instance.save(update_fields=('is_deleted',))
+        Goal.objects.filter(category=instance).update(status=Goal.Status.archived)
         return instance
 
 
@@ -86,7 +87,7 @@ class GoalView(RetrieveUpdateDestroyAPIView):
         return Goal.objects.filter(Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived))
 
     def perform_destroy(self, instance):
-        instance.status = Goal.Status.archived
+        instance.status = Coal.Status.archived
         instance.save(update_fields=('status',))
         return instance
 
@@ -101,11 +102,12 @@ class GoalCommentListView(ListAPIView):
     model = GoalComment
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCommentSerializer
-    filterset_fields = ['goal']
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter]
+    filterset_fields = ["goal"]
     ordering = ["created"]
+
 
     def get_queryset(self):
         return GoalComment.objects.filter(
