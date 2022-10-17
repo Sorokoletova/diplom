@@ -40,11 +40,6 @@ class GoalCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     category = serializers.PrimaryKeyRelatedField(queryset=GoalCategory.objects.filter(is_deleted=False))
 
-    class Meta:
-        model = Goal
-        read_only_fields = ("id", "created", "updated", "user")
-        fields = "__all__"
-
     def validate_category(self, value: GoalCategory):
         # if self.context["request"].user != value.user:
         #     raise exceptions.PermissionDenied
@@ -56,6 +51,10 @@ class GoalCreateSerializer(serializers.ModelSerializer):
             raise exceptions.PermissionDenied
         return value
 
+    class Meta:
+        model = Goal
+        read_only_fields = ("id", "created", "updated", "user")
+        fields = "__all__"
 
 class GoalSerializer(serializers.ModelSerializer):
     """Просмотр и изменение цели"""
@@ -66,16 +65,10 @@ class GoalSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
-        def validate_category(self, value):
-            if value.user != self.context["request"].user:
-                raise exceptions.PermissionDenied
-            if not BoardParticipant.objects.filter(
-                    board_id=value.board_id,
-                    role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                    user=self.context['request'].user
-            ).exists():
-                raise exceptions.PermissionDenied
-            return value
+    def validate_category(self, value):
+        if self.context['request'].user != value.user:
+            raise exceptions.PermissionDenied
+        return value
 
 
 class GoalCommentCreateSerializer(serializers.ModelSerializer):
@@ -84,19 +77,8 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GoalComment
-        read_only_fields = ("id", "created", "updated", "user")
-        fields = "__all__"
-
-    def validate_category(self, value):
-        if value.user != self.context["request"].user:
-            raise exceptions.PermissionDenied
-        if not BoardParticipant.objects.filter(
-                board_id=value.category.board_id,
-                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                user=self.context['request'].user
-        ).exists():
-            raise exceptions.PermissionDenied
-        return value
+        fields = '__all__'
+        read_only_fields = ('id', 'created', 'updated', 'user')
 
 
 class GoalCommentSerializer(serializers.ModelSerializer):

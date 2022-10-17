@@ -140,7 +140,7 @@ class GoalView(RetrieveUpdateDestroyAPIView):
 
 class GoalCommentCreateView(CreateAPIView):
     serializer_class = GoalCommentCreateSerializer
-    permission_classes = [GoalCommentPermissions]
+    permission_classes = [GoalCommentPermissions, IsOwnerOrReadOnly]
 
 
 class GoalCommentListView(ListAPIView):
