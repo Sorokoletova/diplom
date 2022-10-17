@@ -10,6 +10,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+
 class Board(BaseModel):
     title = models.CharField(verbose_name="Название", max_length=255)
     is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
@@ -17,6 +18,7 @@ class Board(BaseModel):
     class Meta:
         verbose_name = "Доска"
         verbose_name_plural = "Доски"
+
 
 class BoardParticipant(BaseModel):
     class Role(models.IntegerChoices):
@@ -63,7 +65,7 @@ class Goal(BaseModel):
 
     title = models.CharField(verbose_name='Название', max_length=255)
     description = models.TextField(verbose_name='Описание', null=True, blank=True)
-    category = models.ForeignKey(GoalCategory, verbose_name='Категория',
+    category = models.ForeignKey(to=GoalCategory, verbose_name='Категория',
                                  on_delete=models.CASCADE,
                                  related_name='goals', )
     status = models.PositiveSmallIntegerField(
@@ -100,4 +102,3 @@ class GoalComment(BaseModel):
 
     def __str__(self):
         return self.text
-

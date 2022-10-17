@@ -25,6 +25,7 @@ class GoalCategoryPermissions(permissions.IsAuthenticated):
             filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
         return BoardParticipant.objects.filter(**filters).exists()
 
+
 class GoalPermissions(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj: Goal):
         filters = {'user': request.user, 'board': obj.category.board}
@@ -32,14 +33,15 @@ class GoalPermissions(permissions.IsAuthenticated):
             filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
         return BoardParticipant.objects.filter(**filters).exists()
 
-class GoalCommentPermissions(permissions.IsAuthenticated):
-   # def has_object_permission(self, request, view, obj):
-        # filters = {'user': request.user, 'board': obj.goal.category.board}
-        # if request.method not in permissions.SAFE_METHODS:
-        #     filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
-        # return BoardParticipant.objects.filter(**filters).exists(
 
-   def has_object_permission(self, request, view, obj: GoalComment):
-       return any((
-           request.method in permissions.SAFE_METHODS,
-           obj.user_id == request.user.id,))
+class GoalCommentPermissions(permissions.IsAuthenticated):
+    # def has_object_permission(self, request, view, obj):
+    # filters = {'user': request.user, 'board': obj.goal.category.board}
+    # if request.method not in permissions.SAFE_METHODS:
+    #     filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
+    # return BoardParticipant.objects.filter(**filters).exists(
+
+    def has_object_permission(self, request, view, obj: GoalComment):
+        return any((
+            request.method in permissions.SAFE_METHODS,
+            obj.user_id == request.user.id,))

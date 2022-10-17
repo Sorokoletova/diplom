@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 from goals.models import GoalCategory, GoalComment, Goal, Board, BoardParticipant
 from core.serializers import ProfileSerializer
 from core.models import User
@@ -45,16 +45,16 @@ class GoalCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
-        def validate_category(self, value):
-            if value.user != self.context["request"].user:
-                raise serializers.ValidationError("Not owner of category")
-            if not BoardParticipant.objects.filter(
-                    board_id=value.board_id,
-                    role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                    user=self.context['request'].user
-            ).exists():
-                raise serializers.ValidationError('Not the owner and editor')
-            return value
+    def validate_category(self, value: GoalCategory):
+        # if self.context["request"].user != value.user:
+        #     raise exceptions.PermissionDenied
+        if not BoardParticipant.objects.filter(
+                board_id=value.board_id,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                user=self.context['request'].user,
+        ).exists():
+            raise exceptions.PermissionDenied
+        return value
 
 
 class GoalSerializer(serializers.ModelSerializer):
@@ -68,7 +68,13 @@ class GoalSerializer(serializers.ModelSerializer):
 
         def validate_category(self, value):
             if value.user != self.context["request"].user:
-                raise serializers.ValidationError("not owner of category")
+                raise exceptions.PermissionDenied
+            if not BoardParticipant.objects.filter(
+                    board_id=value.board_id,
+                    role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                    user=self.context['request'].user
+            ).exists():
+                raise exceptions.PermissionDenied
             return value
 
 
@@ -80,6 +86,17 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
         model = GoalComment
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
+
+    def validate_category(self, value):
+        if value.user != self.context["request"].user:
+            raise exceptions.PermissionDenied
+        if not BoardParticipant.objects.filter(
+                board_id=value.category.board_id,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                user=self.context['request'].user
+        ).exists():
+            raise exceptions.PermissionDenied
+        return value
 
 
 class GoalCommentSerializer(serializers.ModelSerializer):

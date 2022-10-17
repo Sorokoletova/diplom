@@ -20,7 +20,7 @@ class LoginView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         login(request=request, user=user)
-        return Response(serializer.data)
+        return Response(ProfileSerializer(user).data)
 
 
 

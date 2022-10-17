@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import django
 from django.utils.encoding import force_str
 from django_filters.rest_framework import DjangoFilterBackend
+
 django.utils.encoding.force_text = force_str
 import environ
 import logging
