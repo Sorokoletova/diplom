@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django_filters',
     'core',
     'goals',
+    'bot',
 ]
 
 MIDDLEWARE = [
@@ -213,3 +214,4 @@ REST_FRAMEWORK = {
     )
 }
 AUTH_USER_MODEL = 'core.User'
+BOT_TOKEN = env('BOT_TOKEN')
