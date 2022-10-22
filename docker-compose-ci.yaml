@@ -53,6 +53,21 @@ services:
       - frontend_nw
     volumes:
       - ./nginx/static/:/opt/static/
+
+  bot:
+    image: tsorokoletova/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    restart: always
+    env_file:
+      - src/.env
+    environment:
+      POSTGRES_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: python manage.py runbot
+    networks:
+      - backend_nw
+
   frontend:
     image: sermalenk/skypro-front:lesson-38
     restart: always

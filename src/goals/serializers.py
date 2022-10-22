@@ -80,7 +80,6 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', 'created', 'updated', 'user')
 
-
 class GoalCommentSerializer(serializers.ModelSerializer):
     """Просмотр и изменение комментария"""
     user = ProfileSerializer(read_only=True)

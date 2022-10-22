@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Field
 
+
 class MessageFrom(BaseModel):
     id: int
     first_name: str
     last_name: str | None = None
-    username: str
+    username: str | None = None
 
 
 class Chat(BaseModel):
