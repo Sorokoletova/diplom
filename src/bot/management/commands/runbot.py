@@ -114,7 +114,7 @@ class Command(BaseCommand):
         return self.storage.reset(tg_user.chat_id)
 
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
-        if msg.text == '/start':
+        if msg.text == '/info':
             self.tg_client.send_message(msg.chat.id, '[Бот поможет в просмотре целей и создании новых. Выберите команду "/"из списка при вводе.]')
         elif msg.text == '/goals':
             self.handle_goals_list(msg, tg_user)
