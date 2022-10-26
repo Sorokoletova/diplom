@@ -18,7 +18,7 @@ class Board(BaseModel):
     class Meta:
         verbose_name = "Доска"
         verbose_name_plural = "Доски"
-
+        ordering = ['title']
 
 class BoardParticipant(BaseModel):
     class Role(models.IntegerChoices):

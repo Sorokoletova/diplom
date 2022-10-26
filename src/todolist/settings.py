@@ -123,7 +123,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
+
 
 USE_I18N = True
 
@@ -211,7 +212,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
-    )
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+
 }
 AUTH_USER_MODEL = 'core.User'
 BOT_TOKEN = env('BOT_TOKEN')

@@ -19,22 +19,6 @@ services:
     networks:
       - backend_nw
 
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    env_file:
-      - src/.env
-    environment:
-      POSTGRES_HOST: postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: python manage.py runbot
-    networks:
-      - backend_nw
-
   api:
     build:
       context: .
@@ -61,6 +45,22 @@ services:
       - frontend_nw
     volumes:
       - ./src/:/opt/todolist
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - src/.env
+    environment:
+      POSTGRES_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: python manage.py runbot
+    networks:
+      - backend_nw
+
   frontend:
     image: sermalenk/skypro-front:lesson-38
     restart: always
