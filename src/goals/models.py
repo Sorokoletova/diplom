@@ -20,6 +20,7 @@ class Board(BaseModel):
         verbose_name_plural = "Доски"
         ordering = ['title']
 
+
 class BoardParticipant(BaseModel):
     class Role(models.IntegerChoices):
         owner = 1, "Владелец"

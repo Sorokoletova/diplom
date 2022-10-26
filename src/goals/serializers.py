@@ -3,6 +3,7 @@ from goals.models import GoalCategory, GoalComment, Goal, Board, BoardParticipan
 from core.serializers import ProfileSerializer
 from core.models import User
 from django.db import transaction
+from typing import Type
 
 
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
@@ -56,6 +57,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
+
 class GoalSerializer(serializers.ModelSerializer):
     """Просмотр и изменение цели"""
     category = serializers.PrimaryKeyRelatedField(queryset=GoalCategory.objects.filter(is_deleted=False))
@@ -65,7 +67,7 @@ class GoalSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
-    def validate_category(self, value):
+    def validate_category(self, value: Type[GoalCategory]):
         if self.context['request'].user != value.user:
             raise exceptions.PermissionDenied
         return value
@@ -79,6 +81,7 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
         model = GoalComment
         fields = '__all__'
         read_only_fields = ('id', 'created', 'updated', 'user')
+
 
 class GoalCommentSerializer(serializers.ModelSerializer):
     """Просмотр и изменение комментария"""

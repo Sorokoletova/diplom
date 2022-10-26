@@ -9,13 +9,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import django
 from django.utils.encoding import force_str
 from django_filters.rest_framework import DjangoFilterBackend
-
-django.utils.encoding.force_text = force_str
 import environ
 import logging
 from typing import Any
 from todolist.filters import HealthCheckFilter
 from pathlib import Path
+django.utils.encoding.force_text = force_str
 
 env = environ.Env(
     # set casting, default value
@@ -124,7 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Europe/Moscow'
-
 
 USE_I18N = True
 

@@ -14,12 +14,14 @@ class BoardCreateTestCase(APITestCase):
         self.url = reverse('create_board')
 
     def test_auth_required(self):
+        """Проверяем аутентификацию"""
         response = self.client.post(self.url, {'title': 'board title'})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_success(self):
+        """Проверяем создание доски"""
         user = User.objects.create_user(
-            username='test_user',
+            username='test',
             password='test_password'
         )
         self.client.force_login(user)
@@ -51,7 +53,7 @@ class BoardRetrievedTestCase(APITestCase):
 
     def setUp(self) -> None:
         self.user = User.objects.create_user(
-            username='test_user',
+            username='test',
             password='test_password'
         )
         self.board = Board.objects.create(title='board_title')
@@ -63,7 +65,8 @@ class BoardRetrievedTestCase(APITestCase):
         ('reader', BoardParticipant.Role.reader),
     ])
     def test_success(self, _, role: BoardParticipant.Role):
-        new_user = User.objects.create_user(username='new_test_user', password='test_password')
+        """Проверяем получение доски """
+        new_user = User.objects.create_user(username='new_test', password='test_password')
 
         if role is BoardParticipant.Role.owner:
             self.client.force_login(self.user)
@@ -75,6 +78,7 @@ class BoardRetrievedTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_not_participant(self):
+        """Проверяем получение доски не участником"""
         new_user = User.objects.create_user(username='new_test_user', password='test_password')
         self.client.force_login(new_user)
 
@@ -82,6 +86,7 @@ class BoardRetrievedTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_deleted_board(self):
+        """Проверяем запрос на удаленных досок"""
         self.board.is_deleted = True
         self.board.save(update_fields=('is_deleted',))
         self.client.force_login(self.user)
@@ -101,6 +106,7 @@ class BoardListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_success(self):
+        """Проверяем сортировку и создание"""
         user = User.objects.create_user(username='test_user', password='test_password')
         boards = Board.objects.bulk_create([
             Board(title='board_3'),
@@ -122,3 +128,13 @@ class BoardListTestCase(APITestCase):
             [board['title'] for board in board_list],
             ['board_1', 'board_2', 'board_3', ]
         )
+
+
+class CategoryCreateTestCase(APITestCase):
+
+    def setUp(self) -> None:
+        self.url = reverse('create_category')
+
+    def test_auth_required(self):
+        response = self.client.post(self.url, {'title': 'Category'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

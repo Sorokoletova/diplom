@@ -28,5 +28,4 @@ urlpatterns = [
     path("goals/", include("goals.urls")),
     path('bot/', include('bot.urls')),
 
-
 ]

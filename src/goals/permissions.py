@@ -40,7 +40,3 @@ class GoalCommentPermissions(permissions.IsAuthenticated):
             request.method in permissions.SAFE_METHODS,
             obj.user_id == request.user.id,
         ))
-        # filters = {'user': request.user, 'board': obj.goal.category.board}
-        # if request.method not in permissions.SAFE_METHODS:
-        #     filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
-        # return BoardParticipant.objects.filter(**filters).exists()
