@@ -17,13 +17,14 @@ jobs:
         uses: actions/checkout@v3
       - name: create env file and build image
         run: |
-          env > .env
+          .env-ci > .env
           docker-compose build
       - name: run tests
         run: | 
           docker-compose run --rm api python manage.py test
   build:
     runs-on: ubuntu-22.04
+    needs: tests
     steps:
       - name: clone code
         uses: actions/checkout@v2
