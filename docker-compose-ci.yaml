@@ -6,7 +6,7 @@ services:
     image: postgres:13.8-alpine
     restart: always
     env_file:
-      - src/.env
+      - .env
     volumes:
       - postgres_data_todolist:/var/lib/postgresql/data
     healthcheck:
@@ -21,7 +21,7 @@ services:
     image: tsorokoletova/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
     env_file:
-      - src/.env
+      - .env
     environment:
       POSTGRES_HOST: postgres
     depends_on:
@@ -39,12 +39,12 @@ services:
       - frontend_nw
     volumes:
       - ./nginx/static/:/opt/static/
-      - ./src/:/opt/todolist
+
   bot:
     image: tsorokoletova/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
     env_file:
-      - src/.env
+      - .env
     environment:
       POSTGRES_HOST: postgres
     depends_on:
