@@ -16,9 +16,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: create env file and build image
-        run: |
+        run:  docker-compose build
 #          env >.env
-          docker-compose build
+#          docker-compose build
       - name: run tests
         run: | 
           docker-compose run --rm api python manage.py test
