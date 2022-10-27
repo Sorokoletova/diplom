@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from core.models import User
-from goals.models import Board, BoardParticipant
+from goals.models import Board, BoardParticipant, GoalCategory
 
 
 class BoardCreateTestCase(APITestCase):
@@ -130,11 +130,34 @@ class BoardListTestCase(APITestCase):
         )
 
 
-class CategoryCreateTestCase(APITestCase):
-
+class CategoryTestCase(APITestCase):
+    """тесты на категории"""
     def setUp(self) -> None:
+        self.board = Board.objects.create(title='board_title')
         self.url = reverse('create_category')
+        self.user = User.objects.create_user(
+            username='test',
+            password='test_password'
+        )
+        self.category = GoalCategory.objects.create(title='category_title', user_id=self.user.id,
+                                                    board_id=self.board.id)
 
     def test_auth_required(self):
-        response = self.client.post(self.url, {'title': 'Category'})
+        response = self.client.post(self.url, {'title': self.category.title, 'user_id': self.user.id,
+                                               'board_id': self.board.id})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_deleted_category(self):
+        self.category.is_deleted = True
+        self.category.save(update_fields=('is_deleted',))
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse('delete_category', kwargs={'pk': self.category.pk}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_user_not_participant(self):
+        new_user = User.objects.create_user(username='new_test_user', password='test_password')
+        self.client.force_login(new_user)
+
+        response = self.client.get(reverse('delete_category', kwargs={'pk': self.category.pk}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
