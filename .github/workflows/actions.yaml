@@ -23,8 +23,7 @@ jobs:
           docker-compose build
       - name: run tests
         run: | 
-          docker-compose run --rm api 
-          python opt/todolist/manage.py test
+          docker-compose run --rm api python manage.py test
   build:
     runs-on: ubuntu-22.04
     needs: tests
