@@ -3,9 +3,10 @@ from django.utils import timezone
 from parameterized import parameterized
 from rest_framework import status
 from rest_framework.test import APITestCase
+import datetime
 
 from core.models import User
-from goals.models import Board, BoardParticipant, GoalCategory
+from goals.models import Board, BoardParticipant, GoalCategory, Goal
 
 
 class BoardCreateTestCase(APITestCase):
@@ -132,6 +133,7 @@ class BoardListTestCase(APITestCase):
 
 class CategoryTestCase(APITestCase):
     """тесты на категории"""
+
     def setUp(self) -> None:
         self.board = Board.objects.create(title='board_title')
         self.url = reverse('create_category')
@@ -139,8 +141,8 @@ class CategoryTestCase(APITestCase):
             username='test',
             password='test_password'
         )
-        self.category = GoalCategory.objects.create(title='category_title', user_id=self.user.id,
-                                                    board_id=self.board.id)
+        self.category = GoalCategory.objects.create(title='category_title', user=self.user,
+                                                    board=self.board)
 
     def test_auth_required(self):
         response = self.client.post(self.url, {'title': self.category.title, 'user_id': self.user.id,
@@ -160,4 +162,68 @@ class CategoryTestCase(APITestCase):
         self.client.force_login(new_user)
 
         response = self.client.get(reverse('delete_category', kwargs={'pk': self.category.pk}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_category(self):
+        """Проверяем создание категории разными пользователями"""
+        users = User.objects.bulk_create([
+            User(username='test_user1', password='test_password'),
+            User(username='test_user2', password='test_password'),
+            User(username='test_user3', password='test_password'),
+        ])
+        print(users)
+        board = Board.objects.create(title='board')
+        BoardParticipant.objects.bulk_create([
+            BoardParticipant(board=board, user=users[0], role=BoardParticipant.Role.owner),
+            BoardParticipant(board=board, user=users[1], role=BoardParticipant.Role.writer),
+            BoardParticipant(board=board, user=users[2], role=BoardParticipant.Role.reader),
+        ])
+        self.client.force_login(users[0])
+
+        response = self.client.post(self.url, {'title': 'title_1', 'is_deleted': False, 'board': board.id})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.client.force_login(users[1])
+        response = self.client.post(self.url, {'title': 'title_2', 'is_deleted': False, 'board': board.id})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.client.force_login(users[2])
+        response = self.client.post(self.url, {'title': 'title_3', 'is_deleted': False, 'board': board.id})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class GoalCreateTestCase(APITestCase):
+
+    def setUp(self) -> None:
+        self.url = reverse('create_goal')
+        self.board = Board.objects.create(title='board_title')
+        self.user = User.objects.create_user(
+            username='test',
+            password='test_password'
+        )
+        self.category = GoalCategory.objects.create(title='category_title', user=self.user, board=self.board)
+        self.goal = Goal.objects.create(title='title',
+                                        description='description',
+                                        due_date=datetime.datetime.today() + datetime.timedelta(days=14),
+                                        priority=Goal.Priority.medium,
+                                        status=Goal.Status.in_progress,
+                                        category=self.category,
+                                        user=self.user
+                                        )
+
+    def test_auth_required(self):
+        response = self.client.post(self.url, {
+            'title': 'title',
+            'description': 'description',
+            'due_date': datetime.datetime.today() + datetime.timedelta(days=14),
+            'priority': Goal.Priority.medium,
+            'status': Goal.Status.in_progress,
+        })
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_not_participant(self):
+        new_user = User.objects.create_user(username='new_test_user', password='test_password')
+        self.client.force_login(new_user)
+
+        response = self.client.get(reverse('delete_goal', kwargs={'pk': self.goal.pk}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
