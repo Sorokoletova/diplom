@@ -1,8 +1,32 @@
 name: Build and deploy action
 on: [push]
 jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    env:
+      DEBUG: True
+      SECRET_KEY: 123456789
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: 5432
+      VK_OAUTH2_KEY: 12351439253
+      VK_OAUTH2_SECRET: 12351439253
+      BOT_TOKEN: 577988154187765
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: create env file and build image
+        run:  |
+          env >.env
+          docker-compose build
+      - name: run tests
+        run: | 
+          docker-compose run --rm api python manage.py test
   build:
     runs-on: ubuntu-22.04
+    needs: tests
     steps:
       - name: clone code
         uses: actions/checkout@v2
@@ -28,8 +52,17 @@ jobs:
          ansible-vault decrypt ./deploy/nginx/default.conf
          cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
          mv deploy/.env-ci deploy/.env
-        
-
+#     - name: Collect static
+#       run: |
+#         cp deploy/.env .env
+#         docker run \
+#         --user 0 \
+#         --rm \
+#         -- env-file $(pwd)/deploy/.env \
+#         --entrypoint '' \
+#         -v $(pwd)/deploy/nginx/static/:/opt/todolist/static/:rm \
+#         ${{ secrets.DOCKER_HUB_USERNAME }}/diplom_skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID \
+#         python manage.py collectstatic -c --no-input
      - name: copy files to server
        uses: appleboy/scp-action@master
        with:

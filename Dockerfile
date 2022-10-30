@@ -18,4 +18,4 @@ RUN python -m pip install --no-cache -r requirements.txt
 # Копируем код приложения
 COPY src/ .
 
-CMD ["bash", "entrypoint.sh"]
+ENTRYPOINT [ "bash" , "entrypoint.sh" ]
