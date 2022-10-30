@@ -171,7 +171,6 @@ class CategoryTestCase(APITestCase):
             User(username='test_user2', password='test_password'),
             User(username='test_user3', password='test_password'),
         ])
-        print(users)
         board = Board.objects.create(title='board')
         BoardParticipant.objects.bulk_create([
             BoardParticipant(board=board, user=users[0], role=BoardParticipant.Role.owner),
